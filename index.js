@@ -163,6 +163,10 @@ module.exports = {
       return this.getServicePackage(service) ? `${this.getServicePackage(service)}.service${index}` : `service${index}`
     },
 
+    getServiceActions(service) {
+      return Object.keys(service.actions);
+    },
+
     generateSchemaForService(service, serviceNameMap) {
       const schema = [];
       const uniqueName = serviceNameMap.get(service.fullName);
@@ -177,7 +181,7 @@ module.exports = {
         schema.push(fieldSchemas.join('\n'));
       }
 
-      const actions = Object.keys(service.actions);
+      const actions = this.getServiceActions(service);
       if (Array.isArray(actions) && actions.length) {
         const actionSchemas = actions.map(action => this.generateSchemaForAction(action, service));
         schema.push(actionSchemas.join('\n'));
@@ -215,7 +219,7 @@ module.exports = {
 
             const [left, right] = relation.split('-to-');
 
-            schema.push(`${sourceName} ${leftMap[left]}--${rightMap[right]} ${targetName}`)
+            schema.push(`${sourceName} ${leftMap[left]}${relation.includes('zero') ? '..' : '--'}${rightMap[right]} ${targetName}`)
           }
         }
       }
