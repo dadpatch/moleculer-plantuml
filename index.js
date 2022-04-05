@@ -2,7 +2,7 @@
 
 var plantumlEncoder = require('plantuml-encoder');
 
-export default {
+module.exports = {
   settings: {
     onlyLocal: false, // build schema from only local services
   },
