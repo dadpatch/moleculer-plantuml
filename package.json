@@ -1,0 +1,23 @@
+{
+  "name": "moleculer-plantuml",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DadPatch/moleculer-plantuml.git"
+  },
+  "author": "Arunas Smaliukas",
+  "license": "MIT",
+  "types": "./index.d.ts",
+  "bugs": {
+    "url": "https://github.com/DadPatch/moleculer-plantuml/issues"
+  },
+  "homepage": "https://github.com/DadPatch/moleculer-plantuml#readme",
+  "dependencies": {
+    "plantuml-encoder": "^1.4.0"
+  }
+}
