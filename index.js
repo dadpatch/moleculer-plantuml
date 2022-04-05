@@ -35,7 +35,7 @@ module.exports = {
         },
       },
 
-      async handler(ctx: any) {
+      async handler(ctx) {
         const schema = await this.generateSchema();
 
         if (ctx.params.output === 'source') {
