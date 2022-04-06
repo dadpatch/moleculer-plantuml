@@ -6,6 +6,7 @@ module.exports = {
   settings: {
     onlyLocal: false, // build schema from only local services
     type: 'class', // class, entity
+    actionParams: false
   },
 
   methods: {
@@ -133,6 +134,32 @@ module.exports = {
       return `{field}${staticSchema} ${displayName}`;
     },
 
+    generateSchemaForActionParamFieldType(field) {
+      return field.type;
+    },
+
+    generateSchemaForActionParams(params) {
+      console.log(params);
+      const schema = [];
+      schema.push('{');
+
+      const fields = [];
+
+      Object.keys(params).forEach(fieldKey => {
+        if (fieldKey.indexOf('$$') === 0) {
+          return;
+        }
+
+        const fieldType = this.generateSchemaForActionParamFieldType(params[fieldKey]);
+        fields.push(`  ${fieldKey}${fieldType ? ' : ' + fieldType : ''},`);
+      });
+
+      schema.push(fields.join('\\n'));
+
+      schema.push('}');
+      return schema.join('\\n');
+    },
+
     generateSchemaForAction(action, service) {
       const actionName = this.getActionName(action, service);
       const actionVisibility = this.getActionVisibility(action, service);
@@ -143,10 +170,15 @@ module.exports = {
         displayName = `${actionVisibility} ${displayName}`
       }
 
-      displayName = `{method} ${displayName}()`;
+      displayName = `{method} ${displayName}(`;
+      if (this.settings.actionParams && service.actions[action].params) {
+        displayName += `params: `;
+        displayName += this.generateSchemaForActionParams(service.actions[action].params);
+      }
+      displayName += ')';
 
       if (actionStereotype) {
-        displayName = `${displayName} <<${actionStereotype}>>`
+        displayName = `${displayName} ${this.settings.actionParams ? '\\n' : ''}<<${actionStereotype}>>`
       }
 
       return displayName;
@@ -184,7 +216,7 @@ module.exports = {
       const actions = this.getServiceActions(service);
       if (Array.isArray(actions) && actions.length) {
         const actionSchemas = actions.map(action => this.generateSchemaForAction(action, service));
-        schema.push(actionSchemas.join('\n'));
+        schema.push(actionSchemas.join(`${this.settings.actionParams ? '\\n' : ''}\n`));
       }
 
       schema.push(`}`);
@@ -232,7 +264,7 @@ module.exports = {
       schema.push('@startuml')
 
       // avoid problems with angled crows feet
-      schema.push('skinparam linetype ortho');
+      // schema.push('skinparam linetype ortho');
 
       const services = await this.fetchServicesWithActions();
       const servicesFiltered = services.filter(this.shouldIncludeService)
@@ -274,7 +306,7 @@ module.exports = {
 
         ctx.meta.$responseType = 'text/html';
         const encoded = plantumlEncoder.encode(schema);
-        const url = 'http://www.plantuml.com/plantuml/img/' + encoded;
+        const url = 'http://www.plantuml.com/plantuml/svg/' + encoded;
         return `<img src="${url}" />`;
       },
     },
