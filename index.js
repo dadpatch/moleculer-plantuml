@@ -100,6 +100,18 @@ module.exports = {
       return false;
     },
 
+    shouldIncludeField(field, service) {
+      if (!service?.settings?.fields[field]) {
+        return true;
+      }
+
+      if (service.settings.fields[field].virtual) {
+        return false;
+      }
+
+      return true;
+    },
+
     shouldIncludeService(service) {
       if (service?.settings?.plantuml === false) {
         return false;
@@ -209,7 +221,7 @@ module.exports = {
       const fields = this.getServiceFields(service);
 
       if (Array.isArray(fields) && fields.length) {
-        const fieldSchemas = fields.map(field => this.generateSchemaForField(field, service));
+        const fieldSchemas = fields.filter(field => this.shouldIncludeField(field, service)).map(field => this.generateSchemaForField(field, service));
         schema.push(fieldSchemas.join('\n'));
       }
 
