@@ -4,6 +4,7 @@ var plantumlEncoder = require('plantuml-encoder');
 
 module.exports = {
   settings: {
+    plantumlServer: 'http://www.plantuml.com/',
     onlyLocal: false, // build schema from only local services
     type: 'class', // class, entity
     actionParams: false
@@ -318,7 +319,7 @@ module.exports = {
 
         ctx.meta.$responseType = 'text/html';
         const encoded = plantumlEncoder.encode(schema);
-        const url = 'http://www.plantuml.com/plantuml/svg/' + encoded;
+        const url = this.settings.plantumlServer + 'plantuml/svg/' + encoded;
         return `<img src="${url}" />`;
       },
     },
