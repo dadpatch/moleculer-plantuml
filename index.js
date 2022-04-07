@@ -4,7 +4,7 @@ var plantumlEncoder = require('plantuml-encoder');
 
 module.exports = {
   settings: {
-    plantumlServer: 'http://www.plantuml.com/',
+    plantumlServer: '//www.plantuml.com/',
     onlyLocal: false, // build schema from only local services
     type: 'class', // class, entity
     actionParams: false
